@@ -33,8 +33,9 @@ def main(args):
             zip_ref.extractall("./")
 
     # load real data
-    dataset_list = ['Opp_g','UCIHAR','MotionSense','w-HAR','Shoaib','har70plus','realworld','TNDA-HAR','PAMAP',\
-                    'USCHAD','Mhealth','Harth','ut-complex','Wharf','WISDM','DSADS','UTD-MHAD','MMAct']
+    # dataset_list = ['Opp_g','UCIHAR','MotionSense','w-HAR','Shoaib','har70plus','realworld','TNDA-HAR','PAMAP',\
+    #                 'USCHAD','Mhealth','Harth','ut-complex','Wharf','WISDM','DSADS','UTD-MHAD','MMAct']
+    dataset_list = ['PAMAP2']
     train_inputs_list, train_masks_list, train_labels_list, label_list_list, all_text_list, num_classes_list = load_multiple(dataset_list, args.padding_size, args.data_path, split='train', k=args.k)
     test_inputs_list, test_masks_list, test_labels_list, label_list_list, all_text_list, _ = load_multiple(dataset_list, args.padding_size, args.data_path, split='test')
     train_dataloader_list, test_dataloader_list = [], []
@@ -168,7 +169,7 @@ if __name__ == "__main__":
     # data
     parser.add_argument('--padding_size', type=int, default='200', help='padding size (default: 200)')
     parser.add_argument('--k', type=int, help='few shot samples per class (default: None)')
-    parser.add_argument('--data_path', type=str, default='./UniMTS_data/', help='/path/to/data/')
+    parser.add_argument('--data_path', type=str, default='/home/calatrava/Documents/PhD/Thesis', help='/path/to/data/')
 
     # training
     parser.add_argument('--stage', type=str, default='finetune', help='training stage')
