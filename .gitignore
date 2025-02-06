@@ -1,7 +1,2 @@
 .venv
-checkpoints
-__pycache__
-reuslts
-wandb
-UniMTS_data
-slurm*
+datasets
