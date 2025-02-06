@@ -1,1 +1,6 @@
 .venv
+datasets/*
+wandb/*
+checkpoint/*
+.cache
+UniMTS_data.zip
