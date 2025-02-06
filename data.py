@@ -118,10 +118,10 @@ def load(dataset, padding_size, data_path, split='test', k=None, args=None):
 
     all_X = np.zeros((X.shape[0], X.shape[1], 22, 6))
 
-
-
-    if dataset == 'PAMAP2':
+    if dataset == 'PAMAP':
         all_X[:, :, 21] = np.concatenate((X[:, :, 0:3], X[:, :, 3:6]), axis=-1)
+        all_X[:, :, 11] = np.concatenate((X[:, :, 6:9], X[:, :, 9:12]), axis=-1)
+        all_X[:, :, 7] = np.concatenate((X[:, :, 12:15], X[:, :, 15:18]), axis=-1)
         original_sampling_rate = 100
         num_classes = 12
 
@@ -139,10 +139,10 @@ def load(dataset, padding_size, data_path, split='test', k=None, args=None):
     elif dataset == 'Opp_g':
         all_X[:, :, 10] = np.concatenate((X[:, :, 0:3] / 1000 * 9.8, X[:, :, 3:6] / 1000),
                                          axis=-1)  # convert unit from milli g to m/s^2
-        all_X[:, :, 19] = np.concatenate((X[:, :, 9:12] / 1000 * 9.8, X[:, :, 12:15] / 1000), axis=-1)
-        all_X[:, :, 20] = np.concatenate((X[:, :, 18:21] / 1000 * 9.8, X[:, :, 21:24] / 1000), axis=-1)
-        all_X[:, :, 15] = np.concatenate((X[:, :, 27:30] / 1000 * 9.8, X[:, :, 30:33] / 1000), axis=-1)
-        all_X[:, :, 16] = np.concatenate((X[:, :, 36:39] / 1000 * 9.8, X[:, :, 39:42] / 1000), axis=-1)
+        all_X[:, :, 19] = np.concatenate((X[:, :, 6:9] / 1000 * 9.8, X[:, :, 9:12] / 1000), axis=-1)
+        all_X[:, :, 20] = np.concatenate((X[:, :, 12:15] / 1000 * 9.8, X[:, :, 15:18] / 1000), axis=-1)
+        all_X[:, :, 15] = np.concatenate((X[:, :, 18:21] / 1000 * 9.8, X[:, :, 21:24] / 1000), axis=-1)
+        all_X[:, :, 16] = np.concatenate((X[:, :, 24:27] / 1000 * 9.8, X[:, :, 27:30] / 1000), axis=-1)
         original_sampling_rate = 30
         num_classes = 4  # locomotion
 
@@ -153,10 +153,10 @@ def load(dataset, padding_size, data_path, split='test', k=None, args=None):
 
     elif dataset == 'DSADS':
         all_X[:, :, 11] = np.concatenate((X[:, :, 0:3], X[:, :, 3:6]), axis=-1)
-        all_X[:, :, 21] = np.concatenate((X[:, :, 9:12], X[:, :, 12:15]), axis=-1)
-        all_X[:, :, 17] = np.concatenate((X[:, :, 18:21], X[:, :, 21:24]), axis=-1)
-        all_X[:, :, 6] = np.concatenate((X[:, :, 27:30], X[:, :, 30:33]), axis=-1)
-        all_X[:, :, 2] = np.concatenate((X[:, :, 36:39], X[:, :, 39:42]), axis=-1)
+        all_X[:, :, 21] = np.concatenate((X[:, :, 6:9], X[:, :, 9:12]), axis=-1)
+        all_X[:, :, 17] = np.concatenate((X[:, :, 12:15], X[:, :, 15:18]), axis=-1)
+        all_X[:, :, 6] = np.concatenate((X[:, :, 18:21], X[:, :, 21:24]), axis=-1)
+        all_X[:, :, 2] = np.concatenate((X[:, :, 24:27], X[:, :, 27:30]), axis=-1)
         original_sampling_rate = 25
         num_classes = 19
 
@@ -174,8 +174,8 @@ def load(dataset, padding_size, data_path, split='test', k=None, args=None):
 
     elif dataset == 'Mhealth':
         all_X[:, :, 11, :3] = X[:, :, 0:3]
-        all_X[:, :, 3] = np.concatenate((X[:, :, 6:9], X[:, :, 9:12] / 180 * np.pi), axis=-1)
-        all_X[:, :, 21] = np.concatenate((X[:, :, 15:18], X[:, :, 18:21] / 180 * np.pi), axis=-1)
+        all_X[:, :, 3] = np.concatenate((X[:, :, 3:6], X[:, :, 6:9] / 180 * np.pi), axis=-1)
+        all_X[:, :, 21] = np.concatenate((X[:, :, 9:12], X[:, :, 12:15] / 180 * np.pi), axis=-1)
         original_sampling_rate = 50
         num_classes = 12
 
@@ -188,8 +188,8 @@ def load(dataset, padding_size, data_path, split='test', k=None, args=None):
         num_classes = 27
 
     elif dataset == 'MotionSense':
-        all_X[:, :, 5] = np.concatenate((X[:, :, :3] * 9.80665, X[:, :, 3:6]), axis=-1)
-        all_X[:, :, 1] = np.concatenate((X[:, :, :3] * 9.80665, X[:, :, 3:6]), axis=-1)
+        all_X[:, :, 5] = np.concatenate((X[:, :, 0:3] * 9.80665, X[:, :, 3:6]), axis=-1)
+        all_X[:, :, 1] = np.concatenate((X[:, :, 0:3] * 9.80665, X[:, :, 3:6]), axis=-1)
         original_sampling_rate = 50
         num_classes = 6
 

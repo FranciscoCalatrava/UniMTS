@@ -40,7 +40,7 @@ def get_correct_parameters_dataset(name):
             "expected_dtype": torch.float32,
             "expected_range": (-1.0, 1.0),
             "num_classes": 7,
-            "num_subject": 30
+            "num_subject": 22
         },
         "SHOAIB": {
             "expected_signal_shape": (30, 256),
@@ -106,9 +106,9 @@ def get_correct_parameters_dataset(name):
             "num_subject": 17
         },
         "WISDM": {
-            "expected_signal_shape": None,
-            "expected_dtype": None,
-            "expected_range": None,
+            "expected_signal_shape": (12, 256),
+            "expected_dtype": torch.float32,
+            "expected_range": (-1.0,1.0),
             "num_classes": 18,
             "num_subject": 51
         },
@@ -438,26 +438,27 @@ def main():
         distribution = yaml.safe_load(f)
 
     for name, ds_class in datasets_classes.items():
-        print(f"Instantiating dataset: {name} -> {ds_class}")
-        # It is assumed that the YAML file has a structure like:
-        # { <dataset_name>: { '1': { 'train': ..., 'validation': ..., 'test': ... } } }
-        dataset_experiment_distribution = distribution.get(name, {}).get('1', {})
-        if not dataset_experiment_distribution:
-            print(f"[Warning] No LOSO distribution found for dataset {name}. Skipping...")
-            continue
-        # Create an instance of the dataset.
-        dataset_dict[name] = ds_class(
-            train=dataset_experiment_distribution.get('train'),
-            validation=dataset_experiment_distribution.get('validation'),
-            test=dataset_experiment_distribution.get('test'),
-            current_directory='./'
-        )
+        if name == 'WISDM':
+            print(f"Instantiating dataset: {name} -> {ds_class}")
+            # It is assumed that the YAML file has a structure like:
+            # { <dataset_name>: { '1': { 'train': ..., 'validation': ..., 'test': ... } } }
+            dataset_experiment_distribution = distribution.get(name, {}).get('1', {})
+            if not dataset_experiment_distribution:
+                print(f"[Warning] No LOSO distribution found for dataset {name}. Skipping...")
+                continue
+            # Create an instance of the dataset.
+            dataset_dict[name] = ds_class(
+                train=dataset_experiment_distribution.get('train'),
+                validation=dataset_experiment_distribution.get('validation'),
+                test=dataset_experiment_distribution.get('test'),
+                current_directory='./'
+            )
 
-    print("\nDataset instances created:")
-    print(dataset_dict)
+        print("\nDataset instances created:")
+        print(dataset_dict)
 
-    # Run the sequential dataset checks
-    sequential_dataset_check(dataset_dict)
+        # Run the sequential dataset checks
+        sequential_dataset_check(dataset_dict)
 
 
 if __name__ == "__main__":

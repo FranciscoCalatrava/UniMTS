@@ -3,7 +3,6 @@
 # Define the directory where Python files will be created
 CREATION_PATH="/home/calatrava/Documents/PhD/Thesis/other_works/UniMTS/datasets"
 
-# Define the list of datasets
 DATASETS=(
     "PAMAP2"
     "MHEALTH"

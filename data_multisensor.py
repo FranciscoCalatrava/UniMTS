@@ -89,7 +89,10 @@ def select_samples(data, masks, labels, k, name, data_path):
 
 
 def load_fcn_data(dataset, experiment, split, data_path):
-    path = data_path + f'/datasets/{dataset}/prepared/{experiment}/classification/{split}.h5'
+    if dataset == 'REALDISP':
+        path = data_path + f'/datasets/{dataset}/prepared/{experiment}/classification/{split}_ideal.h5'
+    else:
+        path = data_path + f'/datasets/{dataset}/prepared/{experiment}/classification/{split}.h5'
     X, y = [], []
     with h5py.File(path, 'r') as file:
         for group in file.keys():
@@ -103,7 +106,7 @@ def load_fcn_data(dataset, experiment, split, data_path):
     return np.transpose(np.array(X), axes=(0,2,1)), np.array(y)
 
 
-def load(dataset, padding_size, data_path, split='test', k=None):
+def load(dataset, padding_size, data_path, split='test', k=None, args=None):
     print(dataset)
 
     X, real_labels = load_fcn_data(dataset, 1, split, data_path)
@@ -242,6 +245,22 @@ def load(dataset, padding_size, data_path, split='test', k=None):
         original_sampling_rate = 50
         num_classes = 13
 
+    elif dataset == 'REALDISP':
+        sensors =  {
+        'RLA': 17,
+        'RUA': 16,
+        'BACK':18,
+        'LUA': 20,
+        'LLA': 21,
+        'RC': 2,
+        'RT': 1,
+        'LT': 5,
+        'LC': 6 }
+        all_X[:, :, sensors[args.SensorPosition]] = np.concatenate((X[:, :, :3], X[:, :, 3:6]), axis=-1)
+        original_sampling_rate = 50
+        num_classes = 33
+
+
     all_X = all_X.reshape(all_X.shape[0], all_X.shape[1], 22 * 6)
 
     # resample real data to 20 Hz
@@ -275,11 +294,11 @@ def load(dataset, padding_size, data_path, split='test', k=None):
     return real_inputs, real_masks, torch.tensor(real_labels), label_list, all_text, num_classes
 
 
-def load_multiple(dataset_list, padding_size, data_path, split='test', k=None):
+def load_multiple(dataset_list, padding_size, data_path, split='test', k=None, args = None):
     real_inputs_list, real_masks_list, real_labels_list, label_list_list, all_text_list, num_classes_list = [], [], [], [], [], []
     for dataset in dataset_list:
         real_inputs, real_masks, real_labels, label_list, all_text, num_classes = load(dataset, padding_size, data_path,
-                                                                                       split, k)
+                                                                                       split, k, args)
         real_inputs_list.append(real_inputs)
         real_masks_list.append(real_masks)
         real_labels_list.append(real_labels)
