@@ -4,3 +4,4 @@ datasets/*
 wandb/*
 slurm*
 UniMTS_data
+__pycache__
