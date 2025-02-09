@@ -42,6 +42,7 @@ def generate_loso_distributions(dataset_subject_counts, val_split=0.2, seed=42):
 # Example usage:
 dataset_subject_counts = {
     "USCHAD": 14,
+    'PAMAP2':8,
     "UCIHAR": 30,
     "OPPORTUNITY": 4,
     "WISDM": 51,

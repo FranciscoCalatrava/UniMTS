@@ -1,0 +1,9 @@
+Self
+
+Average accuracy is 0.6737331971983519
+Average f1 is 0.6417934999907237
+
+IDeal
+
+Average accuracy is 0.8285506941813972
+Average f1 is 0.8027881341669594

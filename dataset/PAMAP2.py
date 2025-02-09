@@ -3,7 +3,7 @@ import numpy as np
 from scipy.signal import butter, lfilter
 
 
-class PAMAP():
+class PAMAP2():
     def __init__(self, train, validation, test, current_directory):
         self.train_participant = train
         self.validation_participant = validation

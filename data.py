@@ -7,7 +7,22 @@ from scipy.signal import resample
 import clip
 from torch.utils.data import Dataset
 import h5py
-
+from dataset.USCHAD import USCHAD
+from dataset.OPPORTUNITY import OPPORTUNITY
+from dataset.WHARF import WHARF
+from dataset.UTDMHAD import UTDMHAD
+from dataset.MOTIONSENSE import MOTIONSENSE
+from dataset.WHAR import WHAR
+from dataset.SHOAIB import SHOAIB
+from dataset.HAR70PLUS import HAR70PLUS
+from dataset.TNDAHAR import TNDAHAR
+from dataset.DSADS import DSADS
+from dataset.WISDM import WISDM
+from dataset.PAMAP2 import PAMAP2
+from dataset.UCIHAR import UCIHAR
+from dataset.HARTH import HARTH
+from dataset.MHEALTH import MHEALTH
+import yaml
 
 class CLIPDataset(Dataset):
 
@@ -88,6 +103,114 @@ def select_samples(data, masks, labels, k, name, data_path):
     return selected_data, selected_masks, selected_labels
 
 
+
+def get_dataset(dataset_name, experiment, current_dir, type = None):
+    dataset_classes = {'USCHAD': USCHAD(train=experiment['train'],
+                        validation=experiment['validation'],
+                        test=experiment['test'],
+                        current_directory=current_dir),
+                        'UCIHAR': UCIHAR(train=experiment['train'],
+                        validation=experiment['validation'],
+                        test=experiment['test'],
+                        current_directory=current_dir),
+                        'HARTH': HARTH(train=experiment['train'],
+                        validation=experiment['validation'],
+                        test=experiment['test'],
+                        current_directory=current_dir),
+                        'MHEALTH': MHEALTH(train=experiment['train'],
+                        validation=experiment['validation'],
+                        test=experiment['test'],
+                        current_directory=current_dir),
+                        'PAMAP2': PAMAP2(train=experiment['train'],
+                        validation=experiment['validation'],
+                        test=experiment['test'],
+                        current_directory=current_dir),
+        'OPPORTUNITY': OPPORTUNITY(train=experiment['train'],
+                                validation=experiment['validation'],
+                                test=experiment['test'],
+                                current_directory=current_dir),
+        'WHARF': WHARF(train=experiment['train'],
+                    validation=experiment['validation'],
+                    test=experiment['test'],
+                    current_directory=current_dir),
+        'UTDMHAD': UTDMHAD(train=experiment['train'],
+                        validation=experiment['validation'],
+                        test=experiment['test'],
+                        current_directory=current_dir),
+        'MOTIONSENSE': MOTIONSENSE(train=experiment['train'],
+                                validation=experiment['validation'],
+                                test=experiment['test'],
+                                current_directory=current_dir),
+        'WHAR': WHAR(train=experiment['train'],
+                    validation=experiment['validation'],
+                    test=experiment['test'],
+                    current_directory=current_dir),
+        'SHOAIB': SHOAIB(train=experiment['train'],
+                        validation=experiment['validation'],
+                        test=experiment['test'],
+                        current_directory=current_dir),
+        'HAR70PLUS': HAR70PLUS(train=experiment['train'],
+                            validation=experiment['validation'],
+                            test=experiment['test'],
+                            current_directory=current_dir),
+        'TNDAHAR': TNDAHAR(train=experiment['train'],
+                        validation=experiment['validation'],
+                        test=experiment['test'],
+                        current_directory=current_dir),
+        'DSADS': DSADS(train=experiment['train'],
+                    validation=experiment['validation'],
+                    test=experiment['test'],
+                    current_directory=current_dir),
+        'WISDM': WISDM(train=experiment['train'],
+                    validation=experiment['validation'],
+                    test=experiment['test'],
+                    current_directory=current_dir)}
+   
+    dataset_class = dataset_classes.get(dataset_name)
+
+    if dataset_class:
+        return dataset_class
+    else:
+        raise ValueError(f"No class defined for {dataset_name}")
+
+
+def get_data(dataset_class,split):
+    if dataset_class == None:
+        raise ValueError(f"Empty dataset class")
+    else:
+        dataset_class.get_datasets()
+        dataset_class.preprocessing()
+        dataset_class.normalize()
+        dataset_class.data_segmentation()
+        dataset_class.prepare_dataset()
+
+        train = [(a[0],a[1],a[2]) for a in dataset_class.training_final]
+        validation = [(a[0],a[1],a[2]) for a in dataset_class.validation_final]
+        test = [(a[0],a[1],a[2]) for a in dataset_class.testing_final]
+
+        if split == 'train':
+            a_list, b_list, c_list = [],[],[]
+            for a,b,c in dataset_class.training_final:
+                a_list.append(a)
+                b_list.append(b)
+            X = np.array(a_list)
+            y = np.array(b_list)
+        elif split == 'validation':
+            a_list, b_list, c_list = [],[],[]
+            for a,b,c in dataset_class.validation_final:
+                a_list.append(a)
+                b_list.append(b)
+            X = np.array(a_list)
+            y = np.array(b_list)
+        else:
+            a_list, b_list, c_list = [],[],[]
+            for a,b,c in dataset_class.testing_final:
+                a_list.append(a)
+                b_list.append(b)
+            X = np.array(a_list)
+            y = np.array(b_list)
+        return np.transpose(np.array(X), axes=(0,2,1)), np.array(y)
+
 def load_fcn_data(dataset, experiment, split, data_path):
     if dataset == 'REALDISP':
         path = data_path + f'/datasets/{dataset}/prepared/{experiment}/classification/{split}_ideal.h5'
@@ -104,12 +227,34 @@ def load_fcn_data(dataset, experiment, split, data_path):
             y.append(activity_label_validation)
     print(np.transpose(np.array(X), axes=(0,2,1)).shape)
     return np.transpose(np.array(X), axes=(0,2,1)), np.array(y)
+    
+
+def read_distribution(dataset, experiment_number):
+    # Read the YAML file
+    with open('./LOSO_DISTRIBUTIONS.yaml', 'r') as file:
+        data = yaml.safe_load(file)
 
 
-def load(dataset, padding_size, data_path, split='test', k=None, args=None):
+    # Get the distribution for the given experiment number
+    distribution = data[dataset][f'{experiment_number}']
+    # print(distribution)
+
+
+
+    if distribution is None:
+        print(f"No distribution found for experiment number {experiment_number}")
+    else:
+        print(f"Distribution for experiment {experiment_number}: {distribution}")
+
+    return {'train': distribution['train'], 'validation': distribution['validation'], 'test': distribution['test']}
+
+def load(dataset, padding_size, data_path,experiment, split='test', k=None, args=None):
     print(dataset)
 
-    X, real_labels = load_fcn_data(dataset, 1, split, data_path)
+    distribution_loso = read_distribution(dataset, experiment)
+
+    dataset_object = get_dataset(dataset_name = dataset, experiment = distribution_loso, current_dir = data_path, type = None)
+    X, real_labels = get_data(dataset_object, split)
 
     with open(f'{data_path}/datasets/{dataset}/{dataset}.json', 'r') as file:
         data = json.load(file)
@@ -118,7 +263,7 @@ def load(dataset, padding_size, data_path, split='test', k=None, args=None):
 
     all_X = np.zeros((X.shape[0], X.shape[1], 22, 6))
 
-    if dataset == 'PAMAP':
+    if dataset == 'PAMAP2':
         all_X[:, :, 21] = np.concatenate((X[:, :, 0:3], X[:, :, 3:6]), axis=-1)
         all_X[:, :, 11] = np.concatenate((X[:, :, 6:9], X[:, :, 9:12]), axis=-1)
         all_X[:, :, 7] = np.concatenate((X[:, :, 12:15], X[:, :, 15:18]), axis=-1)
@@ -136,7 +281,7 @@ def load(dataset, padding_size, data_path, split='test', k=None, args=None):
         original_sampling_rate = 50
         num_classes = 6
 
-    elif dataset == 'Opp_g':
+    elif dataset == 'OPPORTUNITY':
         all_X[:, :, 10] = np.concatenate((X[:, :, 0:3] / 1000 * 9.8, X[:, :, 3:6] / 1000),
                                          axis=-1)  # convert unit from milli g to m/s^2
         all_X[:, :, 19] = np.concatenate((X[:, :, 6:9] / 1000 * 9.8, X[:, :, 9:12] / 1000), axis=-1)
@@ -160,26 +305,26 @@ def load(dataset, padding_size, data_path, split='test', k=None, args=None):
         original_sampling_rate = 25
         num_classes = 19
 
-    elif dataset == 'Harth':
+    elif dataset == 'HARTH':
         all_X[:, :, 9, :3] = X[:, :, :3] * 9.80665
         all_X[:, :, 6, :3] = X[:, :, 3:6] * 9.80665
         original_sampling_rate = 50
         num_classes = 12
 
-    elif dataset == 'Wharf':
+    elif dataset == 'WHARF':
         X = -14.709 + X / 63 * (2 * 14.709)
         all_X[:, :, 21, :3] = X
         original_sampling_rate = 32
         num_classes = 14
 
-    elif dataset == 'Mhealth':
+    elif dataset == 'MHEALTH':
         all_X[:, :, 11, :3] = X[:, :, 0:3]
         all_X[:, :, 3] = np.concatenate((X[:, :, 3:6], X[:, :, 6:9] / 180 * np.pi), axis=-1)
         all_X[:, :, 21] = np.concatenate((X[:, :, 9:12], X[:, :, 12:15] / 180 * np.pi), axis=-1)
         original_sampling_rate = 50
         num_classes = 12
 
-    elif dataset == 'UTD-MHAD':
+    elif dataset == 'UTDMHAD':
         all_X[real_labels < 21, :, 21, :] = np.concatenate(
             (X[real_labels < 21, :, 0:3] * 9.80665, X[real_labels < 21, :, 3:6] / 180 * np.pi), axis=-1)
         all_X[real_labels >= 21, :, 5, :] = np.concatenate(
@@ -187,18 +332,18 @@ def load(dataset, padding_size, data_path, split='test', k=None, args=None):
         original_sampling_rate = 50
         num_classes = 27
 
-    elif dataset == 'MotionSense':
+    elif dataset == 'MOTIONSENSE':
         all_X[:, :, 5] = np.concatenate((X[:, :, 0:3] * 9.80665, X[:, :, 3:6]), axis=-1)
         all_X[:, :, 1] = np.concatenate((X[:, :, 0:3] * 9.80665, X[:, :, 3:6]), axis=-1)
         original_sampling_rate = 50
         num_classes = 6
 
-    elif dataset == 'w-HAR':
+    elif dataset == 'WHAR':
         all_X[:, :, 7] = np.concatenate((X[:, :, :3] * 9.80665, X[:, :, 3:6] / 180 * np.pi), axis=-1)
         original_sampling_rate = 250
         num_classes = 7
 
-    elif dataset == 'Shoaib':
+    elif dataset == 'SHOAIB':
         all_X[:, :, 1] = X[:, :, :6]
         all_X[:, :, 5] = X[:, :, 6:12]
         all_X[:, :, 21] = X[:, :, 12:18]
@@ -207,7 +352,7 @@ def load(dataset, padding_size, data_path, split='test', k=None, args=None):
         original_sampling_rate = 50
         num_classes = 7
 
-    elif dataset == 'har70plus':
+    elif dataset == 'HAR70PLUS':
         all_X[:, :, 0, :3] = X[:, :, :3] * 9.80665
         all_X[:, :, 5, :3] = X[:, :, 3:6] * 9.80665
         original_sampling_rate = 50
@@ -230,7 +375,7 @@ def load(dataset, padding_size, data_path, split='test', k=None, args=None):
         original_sampling_rate = 50
         num_classes = 8
 
-    elif dataset == 'TNDA-HAR':
+    elif dataset == 'TNDAHAR':
         all_X[:, :, 20] = np.concatenate((X[:, :, :3], X[:, :, 3:6]), axis=-1)
         all_X[:, :, 2] = np.concatenate((X[:, :, 6:9], X[:, :, 9:12]), axis=-1)
         all_X[:, :, 21] = np.concatenate((X[:, :, 12:15], X[:, :, 15:18]), axis=-1)
@@ -294,11 +439,10 @@ def load(dataset, padding_size, data_path, split='test', k=None, args=None):
     return real_inputs, real_masks, torch.tensor(real_labels), label_list, all_text, num_classes
 
 
-def load_multiple(dataset_list, padding_size, data_path, split='test', k=None, args = None):
+def load_multiple(dataset_list, padding_size, data_path, experiment, split='test', k=None, args = None):
     real_inputs_list, real_masks_list, real_labels_list, label_list_list, all_text_list, num_classes_list = [], [], [], [], [], []
     for dataset in dataset_list:
-        real_inputs, real_masks, real_labels, label_list, all_text, num_classes = load(dataset, padding_size, data_path,
-                                                                                       split, k, args)
+        real_inputs, real_masks, real_labels, label_list, all_text, num_classes = load(dataset, padding_size, data_path, experiment,split, k, args)
         real_inputs_list.append(real_inputs)
         real_masks_list.append(real_masks)
         real_labels_list.append(real_labels)

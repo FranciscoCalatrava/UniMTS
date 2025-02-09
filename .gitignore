@@ -4,5 +4,9 @@ datasets/*
 wandb/*
 slurm*
 UniMTS_data
+UniMTS_data.zip
+checkpoint/*
 __pycache__
-results
+checkpoint/exp0/REALDISP_k=None_best_loss.pth
+checkpoint/UniMTS.pth
+results/*

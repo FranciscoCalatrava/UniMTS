@@ -96,10 +96,10 @@ class UCIHAR():
     # Load the dataset, returns train and test X and y elements
     def load_dataset(self, prefix=''):
         # load all train
-        trainX, trainy, train_subject = self.load_dataset_group('train', prefix + 'dataset/UCIHAR/normal/')
+        trainX, trainy, train_subject = self.load_dataset_group('train', prefix + 'datasets/UCIHAR/normal/')
         # print('X train shape: {}, y train shape: {}'.format(trainX.shape, trainy.shape))
         # load all test
-        testX, testy, test_subject = self.load_dataset_group('test', prefix + 'dataset/UCIHAR/normal/')
+        testX, testy, test_subject = self.load_dataset_group('test', prefix + 'datasets/UCIHAR/normal/')
         # print('X test shape: {}, y test shape: {}'.format(testX.shape, testy.shape))
         # zero-offset class values
         trainy = trainy - 1
@@ -302,7 +302,7 @@ class UCIHAR():
         # all_sensors = [2, 3, 4, 5, 6, 7, 15, 16, 17, 18, 19, 20, 28, 29, 30, 31, 32, 33, 41, 42, 43, 44, 45, 46, 54, 55,
         #                56, 57, 58, 59, 67, 68, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 93, 94, 95, 96, 97, 98, 106, 107,
         #                108, 109, 110, 111]
-        SENSORS = [3,4,5,6,7,8]
+        SENSORS = [0,1,2,3,4,5,6,7,8]
 
         for a in self.training_normalized_segmented.keys():
             for b in self.training_normalized_segmented[a]:

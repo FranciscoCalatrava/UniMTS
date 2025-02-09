@@ -344,7 +344,7 @@ class WHARF():
                 validation.append((np.transpose(b.iloc[:, 0:-1].to_numpy()), int(b.iloc[0, -1])-1, int(a)))
         for a in self.test_normalized_segmented.keys():
             for b in self.test_normalized_segmented[a]:
-                testing.append((np.transpose(b.iloc[:, 0:-1].to_numpy()), int(b.iloc[0, 1])-1, int(a)))
+                testing.append((np.transpose(b.iloc[:, 0:-1].to_numpy()), int(b.iloc[0, -1])-1, int(a)))
         self.training_final = training
         self.validation_final = validation
         self.testing_final = testing

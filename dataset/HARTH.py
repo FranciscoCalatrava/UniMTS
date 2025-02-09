@@ -59,9 +59,34 @@ class HARTH():
 
         # print(training)
         # print(self.headers)
+        participant_mapping = {
+            1: "S006",
+            2: "S008",
+            3: "S009",
+            4: "S010",
+            5: "S012",
+            6: "S013",
+            7: "S014",
+            8: "S015",
+            9: "S016",
+            10: "S017",
+            11: "S018",
+            12: "S019",
+            13: "S020",
+            14: "S021",
+            15: "S022",
+            16: "S023",
+            17: "S024",
+            18: "S025",
+            19: "S026",
+            20: "S027",
+            21: "S028",
+            22: "S029"
+        }
+
 
         for b in training.keys():
-            data = pd.read_csv(self.PATH + f"datasets/HARTH/normal/S0{b}.csv", sep=',', encoding = 'utf8', dtype={'timestamp': str,
+            data = pd.read_csv(self.PATH + f"datasets/HARTH/normal/{participant_mapping[b]}.csv", sep=',', encoding = 'utf8', dtype={'timestamp': str,
                                                                                                                   'back_x': float,
                                                                                                                   'back_y':float,
                                                                                                                   'back_z':float,
@@ -74,7 +99,7 @@ class HARTH():
             data.columns = self.headers
             training[b] = data
         for b in validation.keys():
-            data = pd.read_csv(self.PATH + f"datasets/HARTH/normal/S0{b}.csv", sep=',', encoding = 'utf8',dtype={'timestamp': str,
+            data = pd.read_csv(self.PATH + f"datasets/HARTH/normal/{participant_mapping[b]}.csv", sep=',', encoding = 'utf8',dtype={'timestamp': str,
                                                                                                                   'back_x': float,
                                                                                                                   'back_y':float,
                                                                                                                   'back_z':float,
@@ -86,7 +111,7 @@ class HARTH():
             data.columns = self.headers
             validation[b] = data
         for b in test.keys():
-            data = pd.read_csv(self.PATH + f"datasets/HARTH/normal/S0{b}.csv", sep=',', encoding = 'utf8',dtype={'timestamp': str,
+            data = pd.read_csv(self.PATH + f"datasets/HARTH/normal/{participant_mapping[b]}.csv", sep=',', encoding = 'utf8',dtype={'timestamp': str,
                                                                                                                   'back_x': float,
                                                                                                                   'back_y':float,
                                                                                                                   'back_z':float,
