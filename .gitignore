@@ -5,3 +5,4 @@ wandb/*
 slurm*
 UniMTS_data
 __pycache__
+results
